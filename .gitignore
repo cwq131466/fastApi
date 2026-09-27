@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+.eggs/
+blog/
+# Database
+*.sqlite3
+*.sqlite3-*
+db.sqlite3*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env.local
+.env.*.local
+
+# Node modules (frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend build output
+web_backend/dist/
+web_font/dist/
+
+# Virtual environment
+vue-fastapi-admin-backend/env/
+
+# Uploads (optional - exclude if contains sensitive data)
+# uploads/
+
+# Lingma
+.lingma/
+
+# Docker
+deploy/
+
+# Docs
+docs/
+uploads/

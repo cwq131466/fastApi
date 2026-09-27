@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "vue-fastapi",
+			"path": "."
+		},
+		{
+			"name": "vue-fastapi-admin-main",
+			"path": "D:/python/vue-fastapi-admin-main"
+		}
+	],
+	"settings": {}
+}

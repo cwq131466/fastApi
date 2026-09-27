@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Main Application (Backend + Frontend + Nginx)
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vue-fastapi-admin
+    restart: unless-stopped
+    ports:
+      - "80:80"       # Nginx (frontend)
+      - "9090:9090"   # FastAPI backend
+    environment:
+      # Backend configuration
+      - BACKEND_PORT=9090
+      - WORKERS=4
+      
+      # OAuth2 Configuration (optional)
+      - OAUTH_ENABLED=false
+      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID:-}
+      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET:-}
+      - OAUTH_SERVER_BASE_URL=${OAUTH_SERVER_BASE_URL:-}
+      - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI:-http://localhost:9090/api/v1/auth/oauth2/callback}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:80}
+      
+      # JumpServer Configuration (optional)
+      - JUMPSERVER_URL=${JUMPSERVER_URL:-}
+      - ACCESS_KEY_ID=${ACCESS_KEY_ID:-}
+      - ACCESS_KEY_SECRET=${ACCESS_KEY_SECRET:-}
+      - ORG_ID=${ORG_ID:-}
+      
+      # Database (SQLite by default, can switch to PostgreSQL)
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///opt/vue-fastapi-admin/backend/db.sqlite3}
+    volumes:
+      # Persist database
+      - db_data:/opt/vue-fastapi-admin/backend
+      # Persist uploads
+      - uploads_data:/opt/vue-fastapi-admin/backend/uploads
+      # Logs
+      - logs_data:/opt/vue-fastapi-admin/backend/logs
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/api/v1/base/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ============================================
+  # PostgreSQL Database (optional, uncomment to use)
+  # ============================================
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: vue-fastapi-admin-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: vue_fastapi_admin
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - app_network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U admin"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+volumes:
+  db_data:
+    driver: local
+  uploads_data:
+    driver: local
+  logs_data:
+    driver: local
+  # postgres_data:
+  #   driver: local
+
+networks:
+  app_network:
+    driver: bridge
